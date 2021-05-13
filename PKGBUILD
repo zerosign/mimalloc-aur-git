@@ -1,8 +1,9 @@
-# Maintainer: Ranieri Althoff <ranisalt+aur at gmail dot com>
+# Based on mimalloc-git AUR by Ranieri Althoff <ranisalt+aur at gmail dot com>
+# Maintainer: <r1nlx0 at gmail dot com>
 
 _pkgname=mimalloc
 pkgname=${_pkgname}-git
-pkgver=r31.8a81a6c
+pkgver=r1435.10ce883
 pkgrel=1
 pkgdesc='General-purpose allocator with excellent performance characteristics'
 arch=('x86_64')
@@ -12,7 +13,7 @@ depends=('glibc')
 makedepends=('cmake')
 provides=('libmimalloc.so=1.0')
 _branch=master
-source=("${_pkgname}::git+https://github.com/microsoft/${_pkgname}.git#branch=master")
+source=("${_pkgname}::git+https://github.com/microsoft/${_pkgname}.git#branch=dev-slice")
 sha256sums=('SKIP')
 
 pkgver() {
@@ -22,7 +23,7 @@ pkgver() {
 
 build() {
   cd "$_pkgname"
-  cmake -DCMAKE_INSTALL_PREFIX=/usr .
+  cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_CFLAGS="-march=native -O3 -pipe -fno-plt -Xclang -load -Xclang /usr/lib/LLVMPolly.so -Wl -mllvm -threads=1 -mllvm -polly -fuse-ld=lld -flto -fuse-linker-plugin" -DCMAKE_CXX_CFLAGS="-march=native -O3 -pipe -fno-plt -Xclang -load -Xclang /usr/lib/LLVMPolly.so -Wl -mllvm -threads=1 -mllvm -polly -fuse-ld=lld -flto -fuse-linker-plugin" -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_INSTALL_PREFIX=/usr .
   make
 }
 
